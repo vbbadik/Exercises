@@ -1,0 +1,25 @@
+/* 
+  Localizable.strings
+  Exercise
+
+  Created by Vitaly Badion on 12.06.2018.
+  Copyright © 2018 Vitaly Badion. All rights reserved.
+*/
+
+"Exercises" = "Мои упражнения";
+"To Exercises" = "К упражнениям";
+"Add Exercise" = "Добавить упражнение";
+"Enter name exercise" = "Введите название упражнения";
+"Please, name the exercise" = "Пожалуйста, укажите название упражнения";
+"Done" = "Готово";
+"Add" = "Добавить";
+"Cancel" = "Отмена";
+"Delete" = "Удалить";
+"Save" = "Сохранить";
+"Edit" = "Изменить";
+"Editing" = "Редактирование";
+"Error!" = "Ошибка!";
+"Enter a new name" = "Введите новое название";
+"Choose reps" = "Выберите количество повторов";
+"In Editing mode, you cannot add a new set" = "В режиме редактирования нельзя добавлять новый подход";
+"Back" = "Назад";

@@ -1,0 +1,10 @@
+/* 
+  InfoPlist.strings
+  Exercises
+
+  Created by Vitaly Badion on 10/23/18.
+  Copyright © 2018 Vitaly Badion. All rights reserved.
+*/
+
+"CFBundleDisplayName" = "Exercises";
+"NSHumanReadableCopyright" = "2018 NZU Inc. All rights reserved.";

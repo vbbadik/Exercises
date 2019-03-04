@@ -78,29 +78,33 @@ class AddSetForExerciseController: UIViewController {
     }
     
     private func viewConstraints() {
-        // Constraints
-        // for Frame View
+        // Ограничения
+        // Frame View
         let frameHeight = frameView.heightAnchor.constraint(equalToConstant: view.bounds.height / 3)
         let frameWidth = frameView.widthAnchor.constraint(equalToConstant: view.bounds.width)
         let frameLeft = frameView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor)
         let frameRight = frameView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor)
         let frameBottom = frameView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor)
         NSLayoutConstraint.activate([frameWidth, frameHeight, frameLeft, frameRight, frameBottom])
-        // for Save Button
+        
+        // Save Button
         saveButton.heightAnchor.constraint(equalToConstant: 40).isActive = true
         saveButton.widthAnchor.constraint(equalTo: cancelButton.widthAnchor, multiplier: 1).isActive = true
         frameView.trailingAnchor.constraint(equalTo:saveButton.trailingAnchor,  constant: 15).isActive = true
         saveButton.topAnchor.constraint(equalTo: frameView.topAnchor).isActive = true
-        // for Cancel Button
+        
+        // Cancel Button
         cancelButton.heightAnchor.constraint(equalTo: saveButton.heightAnchor, multiplier: 1).isActive = true
         cancelButton.widthAnchor.constraint(equalTo: saveButton.widthAnchor, multiplier: 1).isActive = true
         cancelButton.leadingAnchor.constraint(equalTo: frameView.leadingAnchor, constant: 15).isActive = true
         cancelButton.topAnchor.constraint(equalTo: frameView.topAnchor).isActive = true
-        // for Picker
+        
+        // Picker
         picker.leadingAnchor.constraint(equalTo: frameView.leadingAnchor).isActive = true
         picker.trailingAnchor.constraint(equalTo: frameView.trailingAnchor).isActive = true
         picker.topAnchor.constraint(equalTo: frameView.topAnchor, constant: 20).isActive = true
-        // for Color Header for Frame
+        
+        // Color Header for Frame
         colorHeaderForFrame.heightAnchor.constraint(equalTo: saveButton.heightAnchor, multiplier: 1).isActive = true
         colorHeaderForFrame.widthAnchor.constraint(equalTo: frameView.widthAnchor, multiplier: 1).isActive = true
         colorHeaderForFrame.leadingAnchor.constraint(equalTo: frameView.leadingAnchor).isActive = true
@@ -109,6 +113,7 @@ class AddSetForExerciseController: UIViewController {
     }
 
     //MARK: - Action
+    
     @objc private func saveButtonTapped() {
         dismiss(animated: true) {
             let reps = self.picker.selectedRow(inComponent: 0) + 1

@@ -35,7 +35,7 @@ class MainViewController: UITableViewController {
         // Большие названия в навигационной панели
         navigationController?.navigationBar.prefersLargeTitles = true
         
-        // Создаем ячейку в таблице
+        // Регистрируем ячейку для таблицы
         tableView.register(UITableViewCell.self, forCellReuseIdentifier: identifierCell)
         
         // Загружаем упражения

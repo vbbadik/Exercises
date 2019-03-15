@@ -389,9 +389,9 @@ extension DetailExerciseViewController {
             }
             
             // Сохранение подходов выбранного упражения в файл
-            if let sets = sets, let file = dataFilePath {
-                SaveAndLoadData<Set>().save(sets, to: file)
-            }
+//            if let sets = sets, let file = dataFilePath {
+//                SaveAndLoadData<Set>().save(sets, to: file)
+//            }
             
             tableView.reloadData()
         }
@@ -428,9 +428,9 @@ extension DetailExerciseViewController: SelectedRepsDelegate {
             self.sets = [Set(isVisible: true, date: date, reps: [reps], time: [date])]
             
             // Сохранение подходов выбранного упражения в файл
-            if let sets = sets, let file = dataFilePath {
-                SaveAndLoadData<Set>().save(sets, to: file)
-            }
+//            if let sets = sets, let file = dataFilePath {
+//                SaveAndLoadData<Set>().save(sets, to: file)
+//            }
             
             self.tableView.reloadData()
             
@@ -463,9 +463,9 @@ extension DetailExerciseViewController: SelectedRepsDelegate {
         }
         
         // Сохранение подходов выбранного упражения в файл
-        if let sets = sets, let file = dataFilePath {
-            SaveAndLoadData<Set>().save(sets, to: file)
-        }
+//        if let sets = sets, let file = dataFilePath {
+//            SaveAndLoadData<Set>().save(sets, to: file)
+//        }
         
         self.tableView.reloadData()
     }

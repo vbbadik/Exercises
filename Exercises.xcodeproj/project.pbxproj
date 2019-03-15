@@ -9,7 +9,6 @@
 /* Begin PBXBuildFile section */
 		240A2D89215A9F1100AEC0AE /* AddSetForExerciseController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 240A2D88215A9F1100AEC0AE /* AddSetForExerciseController.swift */; };
 		24321286222D06F400AEE267 /* SaveAndLoadData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 24321285222D06F400AEE267 /* SaveAndLoadData.swift */; };
-		246C77602154266F00E6FD67 /* DetailExerciseViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 246C775F2154266F00E6FD67 /* DetailExerciseViewCell.swift */; };
 		247710EE216390ED00A104A2 /* DataTransfer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 247710ED216390ED00A104A2 /* DataTransfer.swift */; };
 		247710F02163ADE800A104A2 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 247710EF2163ADE800A104A2 /* Assets.xcassets */; };
 		24771114216618F100A104A2 /* DetailExerciseViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 24771113216618F100A104A2 /* DetailExerciseViewController.swift */; };
@@ -18,7 +17,6 @@
 		248A330920CD3C8C001C9622 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 248A330720CD3C8C001C9622 /* LaunchScreen.storyboard */; };
 		248A331120CD3CCF001C9622 /* MainViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 248A331020CD3CCF001C9622 /* MainViewController.swift */; };
 		248A331320CDA4D2001C9622 /* Exercise.swift in Sources */ = {isa = PBXBuildFile; fileRef = 248A331220CDA4D2001C9622 /* Exercise.swift */; };
-		248A331720CE8F6E001C9622 /* DetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 248A331620CE8F6E001C9622 /* DetailViewController.swift */; };
 		248A331B20CFEA9E001C9622 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 248A331D20CFEA9E001C9622 /* Localizable.strings */; };
 		249E2AED217E72E800AD05FC /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 249E2AEB217E72E800AD05FC /* InfoPlist.strings */; };
 /* End PBXBuildFile section */
@@ -26,7 +24,6 @@
 /* Begin PBXFileReference section */
 		240A2D88215A9F1100AEC0AE /* AddSetForExerciseController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddSetForExerciseController.swift; sourceTree = "<group>"; };
 		24321285222D06F400AEE267 /* SaveAndLoadData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SaveAndLoadData.swift; sourceTree = "<group>"; };
-		246C775F2154266F00E6FD67 /* DetailExerciseViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetailExerciseViewCell.swift; sourceTree = "<group>"; };
 		247710ED216390ED00A104A2 /* DataTransfer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataTransfer.swift; sourceTree = "<group>"; };
 		247710EF2163ADE800A104A2 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		24771113216618F100A104A2 /* DetailExerciseViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DetailExerciseViewController.swift; sourceTree = "<group>"; };
@@ -37,7 +34,6 @@
 		248A330A20CD3C8C001C9622 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		248A331020CD3CCF001C9622 /* MainViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainViewController.swift; sourceTree = "<group>"; };
 		248A331220CDA4D2001C9622 /* Exercise.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Exercise.swift; sourceTree = "<group>"; };
-		248A331620CE8F6E001C9622 /* DetailViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetailViewController.swift; sourceTree = "<group>"; };
 		248A331A20CFE8D9001C9622 /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = ru.lproj/Main.strings; sourceTree = "<group>"; };
 		248A331C20CFEA9E001C9622 /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = ru.lproj/Localizable.strings; sourceTree = "<group>"; };
 		249E2AEC217E72E800AD05FC /* Base */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = Base; path = Exercises/Base.lproj/InfoPlist.strings; sourceTree = "<group>"; };
@@ -59,11 +55,9 @@
 			isa = PBXGroup;
 			children = (
 				248A331020CD3CCF001C9622 /* MainViewController.swift */,
-				248A331620CE8F6E001C9622 /* DetailViewController.swift */,
 				24771113216618F100A104A2 /* DetailExerciseViewController.swift */,
 				240A2D88215A9F1100AEC0AE /* AddSetForExerciseController.swift */,
 				24321285222D06F400AEE267 /* SaveAndLoadData.swift */,
-				246C775F2154266F00E6FD67 /* DetailExerciseViewCell.swift */,
 			);
 			path = Controller;
 			sourceTree = "<group>";
@@ -207,8 +201,6 @@
 				24321286222D06F400AEE267 /* SaveAndLoadData.swift in Sources */,
 				24771114216618F100A104A2 /* DetailExerciseViewController.swift in Sources */,
 				248A331320CDA4D2001C9622 /* Exercise.swift in Sources */,
-				246C77602154266F00E6FD67 /* DetailExerciseViewCell.swift in Sources */,
-				248A331720CE8F6E001C9622 /* DetailViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -9,40 +9,41 @@
 // Используется способ реализованный в видео https://www.youtube.com/watch?v=VFtsSEYDNRU
 
 import UIKit
+import RealmSwift
 
 class DetailExerciseViewController: UITableViewController {
-    
-    final let identifierCell = "RepsCell"
-    fileprivate let dataFilePath = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first?.appendingPathComponent("Sets.plist")
+
+    fileprivate var sets: Results<Set>?
+    fileprivate final let identifierCell = "RepsCell"
+//    fileprivate lazy var realm = try! Realm()
+//    fileprivate lazy var realm = try! Realm(configuration: RealmConfig.exerciseRealmConfig) // использоварие своего файла конфигурации Realm для легкой миграции
     fileprivate var regularConstraints = [NSLayoutConstraint]()
     fileprivate var compactConstraints = [NSLayoutConstraint]()
     
     // Переменные для передачи данных между контроллерами
-    var selectedExercise: String?
-    var sets: [Set]?
-    var competionHandler: (([Set]) -> Void)?
+    var selectedExercise: Exercise?
 
     
     fileprivate let exerciseButton: UIButton = {
         let button = UIButton(frame: .zero)
-        button.backgroundColor = UIColor(red: 255, green: 0, blue: 0, alpha: 0.75)
+        button.backgroundColor = #colorLiteral(red: 0.8462908864, green: 0.1336644292, blue: 0.1662362516, alpha: 0.7495184075) //UIColor(red: 255, green: 0, blue: 0, alpha: 0.75)
         button.setTitle("+", for: .normal)
         button.setTitleColor(.white, for: .normal)
         button.titleLabel?.font = UIFont.systemFont(ofSize: 36)
         button.titleEdgeInsets.top = -5
-        button.layer.zPosition = 2
+        button.layer.zPosition = 1
         button.translatesAutoresizingMaskIntoConstraints = false
         button.addShadow(offset: CGSize.zero, color: .black, radius: 4, opacity: 0.25) //добавлен с помощью метода addShadow в extension для View
         return button
     }()
     
-    lazy var dateFormatter: DateFormatter = {
+    fileprivate lazy var dateFormatter: DateFormatter = {
         let formatter = DateFormatter()
         formatter.dateStyle = .medium
         return formatter
     }()
     
-    lazy var timeFormatter: DateFormatter = {
+    fileprivate lazy var timeFormatter: DateFormatter = {
         let formatter = DateFormatter()
         formatter.timeStyle = .medium
         return formatter
@@ -52,7 +53,7 @@ class DetailExerciseViewController: UITableViewController {
         super.viewDidLoad()
         
         // Название упражнения отображаемое в Navigation Bar
-        navigationItem.title = selectedExercise
+        navigationItem.title = selectedExercise?.name
         
         // Переименование кнопки "Назад" для возврата на Main View Controller
         let backButtonItem = UIBarButtonItem(title: NSLocalizedString("To Exercises", comment: "To Exercises"), style: UIBarButtonItem.Style.plain, target: self, action: nil)
@@ -64,11 +65,7 @@ class DetailExerciseViewController: UITableViewController {
         // Регистрируем ячейку для таблицы
         tableView.register(UITableViewCell.self, forCellReuseIdentifier: identifierCell)
         
-//        let segmented = UISegmentedControl(items: ["Show", "Hide"])
-//        segmented.backgroundColor = .red
-//        segmented.tintColor = .white
-//        tableView.tableHeaderView = segmented
-        
+        loadSets()
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -76,15 +73,28 @@ class DetailExerciseViewController: UITableViewController {
         addSetButton()
     }
     
-    override func viewWillDisappear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-        
-        // Отправка подробных данных о выполнении упражения в Main View Controller
-        guard let infoOfSets = self.sets else { return }
-        self.competionHandler?(infoOfSets)
-    }
-    
     //MARK: - Methods
+    
+    // Загружаем подходы для выбранного упражнения
+    fileprivate func loadSets() {
+
+        if selectedExercise != nil {
+            
+            do {
+                let realm = try Realm()
+//                let realm = try Realm(configuration: RealmConfig.exerciseRealmConfig) // использоварие своего файла конфигурации Realm для легкой миграции
+                
+                // Если используется связь между Exercise и Set
+//                sets = selectedExercise?.sets.sorted(byKeyPath: "date", ascending: false)
+                
+                // Если между Exercise и Set нет связи
+                sets = realm.objects(Set.self).filter("exercise = %@", selectedExercise!).sorted(byKeyPath: "date", ascending: false)
+                
+            } catch {
+                debugPrint("Loading sets for the selected exercise failed!")
+            }
+        }
+    }
     
     // Создаем кнопку "Add Set"
     fileprivate func addSetButton() {
@@ -164,61 +174,26 @@ class DetailExerciseViewController: UITableViewController {
         
         guard let isVisible = sets?[section].isVisible else { return }
         
-        sets?[section].isVisible = !isVisible
-        
-        if isVisible {
-            button.setImage(showOrHideRepsImage(button: button), for: .normal)
-            tableView.deleteRows(at: indexPathToOpenOrClose, with: .fade)
-        } else {
-            button.setImage(showOrHideRepsImage(button: button), for: .normal)
-            tableView.insertRows(at: indexPathToOpenOrClose, with: .fade)
+        do {
+            let realm = try Realm()
+            //    let realm = try Realm(configuration: RealmConfig.exerciseRealmConfig) // использоварие своего файла конфигурации Realm для легкой миграции
+            
+            try realm.write {
+                self.sets?[section].isVisible = !isVisible
+                
+                if isVisible {
+                    button.setImage(showOrHideRepsImage(button: button), for: .normal)
+                    tableView.deleteRows(at: indexPathToOpenOrClose, with: .fade)
+                } else {
+                    button.setImage(showOrHideRepsImage(button: button), for: .normal)
+                    tableView.insertRows(at: indexPathToOpenOrClose, with: .fade)
+                }
+                
+            }
+        } catch {
+            fatalError("Error when showing/hiding results for the date! - \(error)")
         }
     }
-    
-    // Додавление нового подхода через Alert Controller
-//    @objc func saveButtonTapped() {
-//
-//        let pickerAlert = UIAlertController(title: NSLocalizedString("Choose reps", comment: "Choose reps"), message: "", preferredStyle: .alert)
-//        let picker = UIPickerView()
-//        picker.translatesAutoresizingMaskIntoConstraints = false
-//        pickerAlert.view.addSubview(picker)
-//        picker.dataSource = self
-//        picker.delegate = self
-//
-//        let save = UIAlertAction(title: NSLocalizedString("Add", comment: "Add"), style: .cancel) { action in
-//            let currentDate = Date()
-//            let date = self.dateFormatter.string(from: currentDate)
-//            let time = self.timeFormatter.string(from: currentDate)
-//            let reps = picker.selectedRow(inComponent: 0) + 1
-//
-//           // guard let reps = self.selectedReps else { return }
-//            // Создание подхода
-//            if self.sets != nil {
-//                if date == self.sets?.first?.date {
-//                    self.sets?[0].isVisible = true
-//                    self.sets?[0].reps.append(reps)
-//                    self.sets?[0].time.append(time)
-//                } else {
-//                    let addReps = Set(isVisible: true, date: date, reps: [reps], time: [time])
-//                    self.sets?.insert(addReps, at: 0)
-//                }
-//            } else {
-//                self.sets = [Set(isVisible: true, date: date, reps: [reps], time: [time])]
-//            }
-//
-//            self.tableView.reloadData()
-//        }
-//
-//        pickerAlert.addAction(save)
-//        present(pickerAlert, animated: true, completion: nil)
-//
-//
-//        //Constraints
-//        picker.leadingAnchor.constraint(equalTo: pickerAlert.view.leadingAnchor).isActive = true
-//        picker.trailingAnchor.constraint(equalTo: pickerAlert.view.trailingAnchor).isActive = true
-//        picker.topAnchor.constraint(equalTo: pickerAlert.view.safeAreaLayoutGuide.topAnchor, constant: 30).isActive = true
-//        pickerAlert.view.safeAreaLayoutGuide.bottomAnchor.constraint(equalTo: picker.bottomAnchor, constant: 30).isActive = true
-//    }
     
     //MARK: - Rotation
     
@@ -282,9 +257,6 @@ extension DetailExerciseViewController {
         
         guard let date = sets?[section].date else { return UIView() }
         
-        //        let hideImage = UIImage(named: "arrow-up")
-        //        let showImage = UIImage(named: "arrow-down")
-        //        let showOrHideRepsImage = (sets?[section].isVisible)! ? hideImage : showImage // UIImageView(frame: .zero)
         let label = UILabel(frame: CGRect(x: 20, y: 0, width: 200, height: 40))
         label.text = dateFormatter.string(from: date)
         label.textAlignment = .left
@@ -293,24 +265,13 @@ extension DetailExerciseViewController {
         let showOrHideImage = showOrHideRepsImage(button: button)
         
         button.setImage(showOrHideImage, for: .normal)
-        //        button.setTitle(date, for: .normal)
-        //        button.setTitleColor(.black, for: .normal)
-        //        button.titleLabel?.font = UIFont.systemFont(ofSize: 16)
         button.imageEdgeInsets.right = 20
         button.contentHorizontalAlignment = .trailing
         button.backgroundColor = #colorLiteral(red: 0.9607843137, green: 0.9607843137, blue: 0.9607843137, alpha: 1)
         button.tag = section
         button.addTarget(self, action: #selector(showOrHideRepsWhenDateTapped), for: .touchUpInside)
-        
-        //showOrHideRepsImage = (sets?[section].isVisible)! ? hideImage : showImage
-        //showOrHideRepsImage.translatesAutoresizingMaskIntoConstraints = false
 
         button.addSubview(label)
-        
-        //Constraints for Image
-        //        button.trailingAnchor.constraint(equalTo: showOrHideRepsImage.trailingAnchor, constant: 20).isActive = true
-        //        showOrHideRepsImage.topAnchor.constraint(equalTo: button.topAnchor, constant: 15).isActive = true
-        //        button.bottomAnchor.constraint(equalTo: showOrHideRepsImage.bottomAnchor, constant: 15).isActive = true
         
         return button
     }
@@ -320,14 +281,10 @@ extension DetailExerciseViewController {
     }
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        //        let hideImage = UIImage(named: "arrow-up")
-        //        let showImage = UIImage(named: "arrow-down")
-        //        let accessoryViewHideButton = UIImageView(image: hideImage)
-        //        let accessoryViewShowButton = UIImageView(image: showImage)
         
-        guard let date = sets?[indexPath.section] else { return UITableViewCell() }
-        let reps = date.reps
-        let time = date.time
+        guard let set = sets?[indexPath.section] else { return UITableViewCell() }
+        let reps = set.reps[indexPath.row].reps
+        let time = set.reps[indexPath.row].time
         
         // Создаем ячейку для времени и количества повторов упражнения
         // Перепределяемая ячейка
@@ -336,9 +293,8 @@ extension DetailExerciseViewController {
         // Простая ячейка
         let cell = UITableViewCell(style: .subtitle, reuseIdentifier: identifierCell)
         
-        cell.textLabel?.text = String(reps[indexPath.row])
-        cell.detailTextLabel?.text = timeFormatter.string(from: time[indexPath.row])
-        //        cell.accessoryView = (sets?[indexPath.section].isVisible)! ? accessoryViewHideButton : accessoryViewShowButton
+        cell.textLabel?.text = String(reps)
+        cell.detailTextLabel?.text = timeFormatter.string(from: time)
         //        cell.layoutMargins.left = 30
         
         return cell
@@ -347,126 +303,191 @@ extension DetailExerciseViewController {
 
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
-        //        if sets?[indexPath.section].isVisible == true {
-        //            sets?[indexPath.section].isVisible = false
-        //            let section = IndexSet.init(integer: indexPath.section)
-        //            tableView.reloadSections(section, with: .fade)
-        //        } else {
-        //            sets?[indexPath.section].isVisible = true
-        //            let section = IndexSet(integer: indexPath.section)
-        //            tableView.reloadSections(section, with: .none)
-        //        }
     }
-
-// При нажатии на кнопку Accessory показывается или скрываются результаты упражнения с временем
-//    override func tableView(_ tableView: UITableView, accessoryButtonTappedForRowWith indexPath: IndexPath) {
-//        if sets?[indexPath.section].isVisible == true {
-//            sets?[indexPath.section].isVisible = false
-//            let section = IndexSet.init(integer: indexPath.section)
-//            tableView.reloadSections(section, with: .fade)
-//        } else {
-//            sets?[indexPath.section].isVisible = true
-//            let section = IndexSet(integer: indexPath.section)
-//            tableView.reloadSections(section, with: .none)
-//        }
-//    }
 
     override func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
         return true
     }
 
     override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
-        let indexSetSection = IndexSet(integer: indexPath.section)
+   
+        guard let selectedSet = sets?[indexPath.section] else {
+            fatalError("Can't getting section!")
+        }
+        
+        let selectedRepsInSet = selectedSet.reps[indexPath.row]
         
         if editingStyle == .delete {
-            sets?[indexPath.section].reps.remove(at: indexPath.row)
-            sets?[indexPath.section].time.remove(at: indexPath.row)
-            tableView.deleteRows(at: [indexPath], with: .fade)
             
-            if sets?[indexPath.section].reps.isEmpty == nil {
-                sets?.remove(at: indexPath.section)
-                tableView.deleteSections(indexSetSection, with: .fade)
-            }
+            RealmPerform.action(.delete, for: selectedRepsInSet)
             
-            // Сохранение подходов выбранного упражения в файл
-//            if let sets = sets, let file = dataFilePath {
-//                SaveAndLoadData<Set>().save(sets, to: file)
+//            do {
+//                let realm = try Realm()
+////                let realm = try Realm(configuration: RealmConfig.exerciseRealmConfig) // использоварие своего файла конфигурации Realm для легкой миграции
+//
+//                realm.beginWrite()
+//                realm.delete(selectedRepsInSet)
+////                tableView.deleteRows(at: [indexPath], with: .fade)
+//                try realm.commitWrite()
+//            } catch {
+//                fatalError("Delete cell failed!")
 //            }
             
+//            tableView.deleteRows(at: [indexPath], with: .fade)
+            
+            if selectedSet.reps.isEmpty {
+                
+                RealmPerform.action(.delete, for: selectedSet)
+                
+//                do {
+//                    let realm = try Realm()
+////                let realm = try Realm(configuration: RealmConfig.exerciseRealmConfig) // использоварие своего файла конфигурации Realm для легкой миграции
+//
+//                    realm.beginWrite()
+//                    realm.delete(selectedSet)
+//                    try realm.commitWrite()
+//                } catch {
+//                    fatalError("Delete cell failed!")
+//                }
+                
+//                tableView.deleteSections(indexSetSection, with: .fade)
+            }
             tableView.reloadData()
         }
     }
+    
+    fileprivate func delete(object: Object) {
+        do {
+            let realm = try Realm()
+            realm.beginWrite()
+            realm.delete(object)
+            try realm.commitWrite()
+        } catch {
+            
+        }
+    }
 }
-
-// Нужны при использовании метода saveButtonTapped()
-//extension DetailViewController: UIPickerViewDataSource {
-//    func numberOfComponents(in pickerView: UIPickerView) -> Int {
-//        return 1
-//    }
-//
-//    func pickerView(_ pickerView: UIPickerView, numberOfRowsInComponent component: Int) -> Int {
-//        return 50
-//    }
-//}
-//
-//extension DetailViewController: UIPickerViewDelegate {
-//    func pickerView(_ pickerView: UIPickerView, titleForRow row: Int, forComponent component: Int) -> String? {
-//        let result = "\(row + 1)"
-//        return result
-//    }
-//}
 
 //MARK: - Selected Reps Delegate
 
 extension DetailExerciseViewController: SelectedRepsDelegate {
     func sendReps(number: Int) {
-    
-        let reps = number
-        let date = Date()
-        guard let dateFromSets = self.sets?.first?.date else {
-            // Создание первого подхода для упражнения
-            self.sets = [Set(isVisible: true, date: date, reps: [reps], time: [date])]
+        
+        // Создание первого подхода для упражнения
+        guard let sets = self.sets, let dateFromSets = sets.first?.date else {
             
-            // Сохранение подходов выбранного упражения в файл
-//            if let sets = sets, let file = dataFilePath {
-//                SaveAndLoadData<Set>().save(sets, to: file)
-//            }
-            
-            self.tableView.reloadData()
+            // Добавление повторения в первый подход
+            create(.set, withValue: number)
             
             return
         }
         
-        // Сравнение даты с использованием DateFormatter
-//        let currentDate = dateFormatter.string(from: date)
-//        let lastDate = dateFormatter.string(from: dateFromSets)
+        // Создание подхода
+        if Calendar.current.component(.day, from: Date()) > Calendar.current.component(.day, from: dateFromSets) {
+            debugPrint("Текущая дата больше последней")
+            
+            create(.set, withValue: number)
+            
+        } else if Calendar.current.component(.day, from: Date()) < Calendar.current.component(.day, from: dateFromSets) {
+            debugPrint("Текущая дата меньше последней")
+            
+            let currentDate = searchDate(in: sets)
+            
+            if currentDate.isFound {
+                create(.reps, withValue: number)
+            } else {
+                create(.set, withValue: number)
+            }
+            
+        } else if Calendar.current.isDateInToday(dateFromSets) {
+            debugPrint("Даты равны")
+            
+            create(.reps, withValue: number)
+        }
+    }
+    
+    // Поиск текущей даты в выполненных подходах упражнения
+    fileprivate func searchDate(in sets: Results<Set>) -> (isFound: Bool,byIndex: Int?) {
         
-        // Сравнение даты с использованием DateСomponenst
-        let calendar = Calendar.current
-        let currentDate = calendar.dateComponents([.day, .month, .year], from: date)
-        let lastDate = calendar.dateComponents([.day, .month, .year], from: dateFromSets)
+        for index in 0..<sets.count {
+            if Calendar.current.isDateInToday(sets[index].date) {
+                return (true, index)
+                
+            }
+        }
+        return (false, nil)
+    }
+    
+    // Добавление повторений к существующей дате
+    fileprivate func addToTodayDate(reps: Reps, for sets: Results<Set>) {
+        let date = self.searchDate(in: sets)
+        
+        if let index = date.byIndex {
+            sets[index].isVisible = true
+            sets[index].reps.append(reps)
+        }
+    }
+    
+    // Создание подхода и повторения упражнения
+    fileprivate func create(_ type: ExerciseType, withValue repeats: Int) {
+        
+        let date = Date()
+        
+        // Создание повторения
+        let reps = Reps()
+        reps.reps = repeats
+        reps.time = date
+        reps.exercise = selectedExercise
         
         // Создание подхода
-        if currentDate == lastDate {
-            self.sets?[0].isVisible = true
-            self.sets?[0].reps.append(reps)
-            self.sets?[0].time.append(date)
-        } else {
-            let addReps = Set(isVisible: true, date: date, reps: [reps], time: [date])
-            self.sets?.insert(addReps, at: 0)
-        // Скрытие результатов прошедших дат
-//            if let sets = sets {
-//                for index in 1..<sets.count {
-//                    self.sets?[index].isVisible = false
-//                }
-//            }
-        }
+        let set = Set()
+        set.date = date
+        set.exercise = selectedExercise
         
-        // Сохранение подходов выбранного упражения в файл
-//        if let sets = sets, let file = dataFilePath {
-//            SaveAndLoadData<Set>().save(sets, to: file)
+        set.reps.append(reps)
+        
+        
+//        DispatchQueue(label: "realmQueue").sync {
+//            do {
+//                let realm = try Realm()
+////                let realm = try Realm(configuration: RealmConfig.exerciseRealmConfig) // использоварие своего файла конфигурации Realm для легкой миграции
+//                try realm.write {
+//                    switch type {
+//                    case .set:
+//                        realm.add(set)
+//
+//                        // Если используется связь между Exercise и Set
+////                        selectedExercise?.sets.append(set)
+//
+//                    case .reps:
+//                        realm.add(reps)
+//
+//                        if let sets = self.sets {
+//                           addToTodayDate(reps: reps, for: sets)
+//                        }
+//
+//                    }
+//                    debugPrint("Added \(type)!")
+//                }
+//            } catch {
+//                fatalError("Can't create a new \(type)!")
+//            }
 //        }
         
+        DispatchQueue(label: "realmQueue").sync {
+            switch type {
+            case .set:
+                RealmPerform.action(.add, for: set)
+            case .reps:
+                RealmPerform.action(.add, for: reps, in: sets)
+            }
+            debugPrint("Added \(type)!")
+        }
         self.tableView.reloadData()
+    }
+    
+    enum ExerciseType {
+        case set
+        case reps
     }
 }

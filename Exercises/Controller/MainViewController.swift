@@ -7,17 +7,18 @@
 //
 
 import UIKit
+import RealmSwift
 
 class MainViewController: UITableViewController {
     
-    var exercises = [Exercise]()
-    final let identifierCell = "ExersiceCell"
-    fileprivate let dataFilePath = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first?.appendingPathComponent("Exercises.plist")
+    fileprivate var exercises: Results<Exercise>?
+    fileprivate final let identifierCell = "ExersiceCell"
+//    fileprivate lazy var realm = try! Realm()
+//    fileprivate lazy var realm = try! Realm(configuration: RealmConfig.exerciseRealmConfig) // использоварие своего файла конфигурации Realm для легкой миграции
     fileprivate weak var actionButtonInACToEnable : UIAlertAction?
     
     // Переменные для передачи данных между контроллерами
-    var name: String?
-    var sets: [Set]?
+    fileprivate var name: String?
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -40,54 +41,36 @@ class MainViewController: UITableViewController {
         
         // Загружаем упражения
         loadExercises()
-
     }
     
     //MARK: - Saving and Loading Exercises from device memory
     
     // Сохранение упражения
-    fileprivate func saveExercises() {
-
-        // Использование глобального метода сохранения
-        let data = SaveAndLoadData<Exercise>()
-        
-        if let file = dataFilePath {
-            data.save(exercises, to: file)
+    fileprivate func save(exercise: Exercise) {
+        DispatchQueue(label: "realmQueue").sync {
+            do {
+                let realm = try Realm()
+                //    let realm = try Realm(configuration: RealmConfig.exerciseRealmConfig) // использоварие своего файла конфигурации Realm для легкой миграции
+                try realm.write {
+                    realm.add(exercise)
+                }
+            } catch {
+                fatalError("Saving failed \(error)")
+            }
         }
-        
-//        // Codable protocol
-//        let encoder = PropertyListEncoder()
-//
-//        do {
-//            let data = try encoder.encode(exercises)
-//            try data.write(to: dataFilePath!)
-//        } catch {
-//            fatalError("Save failed \(error)")
-//        }
-
         tableView.reloadData()
     }
 
     // Загрузка упражений
     fileprivate func loadExercises() {
-        
-        // Использование глобального метода загрузки
-        let data = SaveAndLoadData<Exercise>()
-        
-        if let file = dataFilePath {
-            exercises = data.load(from: file)
+        do {
+            let realm = try Realm()
+            //                let realm = try Realm(configuration: RealmConfig.exerciseRealmConfig) // использоварие своего файла конфигурации Realm для легкой миграции
+            self.exercises = realm.objects(Exercise.self).sorted(byKeyPath: "id")
+        } catch {
+            debugPrint("Exercise loading failed!")
         }
-
-//        // Codable protocol
-//        guard let data = try? Data(contentsOf: dataFilePath!) else { return }
-//        let decoder = PropertyListDecoder()
-//
-//        do {
-//            exercises = try decoder.decode([Exercise].self, from: data)
-//        } catch {
-//            fatalError("Load failed \(error)")
-//        }
-    }
+}
     
     //MARK: - Actions
 
@@ -119,13 +102,13 @@ class MainViewController: UITableViewController {
         
         let add = UIAlertAction(title: addTitleButton, style: .default) { action in
             
-            guard let exercise = alert.textFields?.first?.text else {
+            guard let titleExercise = alert.textFields?.first?.text else {
                 fatalError("Text Field is empty!")
             }
             
-            let addNewExersice = Exercise(name: exercise)
-            self.exercises.append(addNewExersice)
-            self.saveExercises()
+            let newExercise = Exercise(name: titleExercise)
+
+            self.save(exercise: newExercise)
             
         }
         
@@ -175,28 +158,58 @@ extension MainViewController {
     }
     
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return exercises.count
+        return exercises?.count ?? 1
     }
-    
-    //MARK: - TableView Delegate methods
     
     // Добавление ячеек в таблицу для отображения на экране устройства
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         
         let cell = tableView.dequeueReusableCell(withIdentifier: identifierCell, for: indexPath)
         
-        cell.textLabel?.text = exercises[indexPath.row].name
+        cell.textLabel?.text = exercises?[indexPath.row].name
         
         return cell
     }
+    
+    //MARK: - TableView Delegate methods
     
     // Реализация действий для всмахивания с правой стороны экрана
     override func tableView(_ tableView: UITableView, editActionsForRowAt indexPath: IndexPath) -> [UITableViewRowAction]? {
         
         let delete = UITableViewRowAction(style: .default, title: NSLocalizedString("Delete", comment: "Delete")) { (action, indexPath) in
-            self.exercises.remove(at: indexPath.row)
+            
+            if let deleteExercise = self.exercises?[indexPath.row] {
+                do {
+                    let realm = try Realm()
+                    //    let realm = try Realm(configuration: RealmConfig.exerciseRealmConfig) // использоварие своего файла конфигурации Realm для легкой миграции
+                    try realm.write {
+                        // Если используется связь между Exercise и Set
+//                        if !deleteExercise.sets.isEmpty {
+//                            
+//                            for set in deleteExercise.sets {
+//                                realm.delete(set.reps)
+//                            }
+//                            
+//                            realm.delete(deleteExercise.sets)
+//                        }
+                        
+                        // Если между Exercise и Set нет связи
+
+                        let exerciseSets = realm.objects(Set.self).filter("exercise = %@", deleteExercise)
+                            
+                        for set in exerciseSets {
+                            realm.delete(set.reps)
+                            realm.delete(set)
+                        }
+
+                        realm.delete(deleteExercise)
+                    }
+                } catch {
+                    fatalError("Can't delete exercise! \(error)")
+                }
+            }
+            
             tableView.deleteRows(at: [indexPath], with: .automatic)
-            self.saveExercises()
         }
         
         let edit = UITableViewRowAction(style: .normal, title: NSLocalizedString("Edit", comment: "Edit")) { (action, indexPath) in
@@ -205,16 +218,18 @@ extension MainViewController {
             
             ac.addTextField(configurationHandler: { textField in
                 self.textFieldProperty(textField)
-                textField.text = self.exercises[indexPath.row].name
+                textField.text = self.exercises?[indexPath.row].name
                 textField.addTarget(self, action: #selector(self.textChanged(sender:)), for: .editingChanged)
             })
             
             let ok = UIAlertAction(title: "OK", style: .default, handler: { action in
-                if let newNameOfExercise = ac.textFields?.first?.text {
-                    self.exercises[indexPath.row].name = newNameOfExercise
-                    self.saveExercises()
+                if let newNameOfExercise = ac.textFields?.first?.text,
+                   let exercise = self.exercises?[indexPath.row]  {
+                    
+                    RealmPerform.action(.update, for: exercise, with: newNameOfExercise)
+
                 }
-                
+                self.tableView.reloadData()
             })
             
             let cancel = UIAlertAction(title: NSLocalizedString("Cancel", comment: "Cancel"), style: .cancel)
@@ -237,21 +252,14 @@ extension MainViewController {
     // Снимаем выделение с ячейки и переходим на Second View Controller
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         
-        tableView.deselectRow(at: indexPath, animated: true)
-        
-        let exercise = exercises[indexPath.row]
-        
-        sets = [Set]()
+        guard let exercise = exercises?[indexPath.row] else {
+            fatalError("Can't get exercise")
+        }
         
         let detailExercise = DetailExerciseViewController()
-        detailExercise.selectedExercise = exercise.name
-        detailExercise.sets = exercise.sets
+        detailExercise.selectedExercise = exercise
         
-        // Получение информации о выполненных повторениях управжнения из Detail View Controller
-        detailExercise.competionHandler = { [weak self] sets in
-            self?.exercises[indexPath.row].sets = sets
-            self?.saveExercises()
-        }
+        tableView.deselectRow(at: indexPath, animated: true)
         
         // Замена кнопки возврата обратно в Main View Controller с "Упражнения" на "Назад"
         //        let backItem = UIBarButtonItem()
@@ -268,11 +276,35 @@ extension MainViewController {
     }
     
     override func tableView(_ tableView: UITableView, moveRowAt sourceIndexPath: IndexPath, to destinationIndexPath: IndexPath) {
-        let moveExercise = exercises[sourceIndexPath.row]
-        exercises.remove(at: sourceIndexPath.row)
-        exercises.insert(moveExercise, at: destinationIndexPath.row)
-        saveExercises()
+        if let sourceObject = exercises?[sourceIndexPath.row], let destinationObject = exercises?[destinationIndexPath.row] {
+            let destinationObjectName = destinationObject.name
+
+//            DispatchQueue(label: "realmQueue").sync {
+                do {
+                    let realm = try Realm()
+//                    let realm = try Realm(configuration: RealmConfig.exerciseRealmConfig) // использоварие своего файла конфигурации Realm для легкой миграции
+                    try realm.write {
+//                        if sourceIndexPath.row < destinationIndexPath.row {
+//                            for index in sourceIndexPath.row...destinationIndexPath.row {
+//                                let object = exercises?[index]
+//                                object?.id += 1
+//                            }
+//                        } else if sourceIndexPath.row > destinationIndexPath.row {
+//                            for index in (destinationIndexPath.row..<sourceIndexPath.row).reversed() {
+//                                let object = exercises?[index]
+//                                object?.id -= 1
+//                            }
+//                        }
+                        destinationObject.name = sourceObject.name
+                        sourceObject.name = destinationObjectName
+                    }
+                } catch {
+                    fatalError("Can't move a exercise")
+                }
+//            }
+        }
     }
+
 }
 
 //MARK: - Property for TextField

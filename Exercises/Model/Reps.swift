@@ -7,3 +7,12 @@
 //
 
 import Foundation
+import RealmSwift
+
+class Reps: Object {
+    @objc dynamic var reps = 0
+    @objc dynamic var time = Date()
+    @objc dynamic var exercise: Exercise? = nil
+//    let exercise = LinkingObjects(fromType: Set.self, property: "exercise")
+    let set = LinkingObjects(fromType: Set.self, property: "reps")
+}

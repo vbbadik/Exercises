@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import RealmSwift
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
@@ -24,12 +25,31 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         window?.makeKeyAndVisible()
         
         // Настройка внешнего вида Navigation Bar
-        UINavigationBar.appearance().barTintColor = #colorLiteral(red: 1, green: 0.1491314173, blue: 0, alpha: 1)
+        UINavigationBar.appearance().barTintColor = #colorLiteral(red: 0.8462908864, green: 0.1336644292, blue: 0.1662362516, alpha: 1)
         UINavigationBar.appearance().tintColor = #colorLiteral(red: 1.0, green: 1.0, blue: 1.0, alpha: 1.0)
         UINavigationBar.appearance().titleTextAttributes = [NSAttributedString.Key.foregroundColor: UIColor.white]
         UINavigationBar.appearance().largeTitleTextAttributes = [NSAttributedString.Key.foregroundColor: UIColor.white]
         UINavigationBar.appearance().isTranslucent = false //Полупрозрачный Navigation Bar
         navigationController.navigationBar.barStyle = .black //Белый цвет для символов в статус баре
+        
+        // Миграция базы данных Realm
+        
+//        Realm.Configuration.defaultConfiguration = Realm.Configuration(
+//            schemaVersion: 1,
+//            migrationBlock: { migration, oldSchemaVersion in
+//                if (oldSchemaVersion < 1) {
+//                    // The enumerateObjects(ofType:_:) method iterates
+//                    // over every Person object stored in the Realm file
+//                    migration.enumerateObjects(ofType: Exercise.className()) { oldObject, newObject in
+//                        // combine name fields into a single field
+//                        newObject!["sortID"] = 0
+//                    }
+//                }
+//        })
+//        
+//        let realm = try! Realm()
+        
+        print(Realm.Configuration.defaultConfiguration.fileURL!)
         
         return true
     }

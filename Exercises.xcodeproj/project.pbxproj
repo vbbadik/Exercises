@@ -9,6 +9,9 @@
 /* Begin PBXBuildFile section */
 		240A2D89215A9F1100AEC0AE /* AddSetForExerciseController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 240A2D88215A9F1100AEC0AE /* AddSetForExerciseController.swift */; };
 		24321286222D06F400AEE267 /* SaveAndLoadData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 24321285222D06F400AEE267 /* SaveAndLoadData.swift */; };
+		24339C5F22949506006C927F /* RealmPerform.swift in Sources */ = {isa = PBXBuildFile; fileRef = 24339C5E22949506006C927F /* RealmPerform.swift */; };
+		244E8C0F2286BFD60014682A /* RealmConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 244E8C0E2286BFD60014682A /* RealmConfig.swift */; };
+		246823EA223C10DF00457622 /* Set.swift in Sources */ = {isa = PBXBuildFile; fileRef = 246823E9223C10DF00457622 /* Set.swift */; };
 		247710EE216390ED00A104A2 /* DataTransfer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 247710ED216390ED00A104A2 /* DataTransfer.swift */; };
 		247710F02163ADE800A104A2 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 247710EF2163ADE800A104A2 /* Assets.xcassets */; };
 		24771114216618F100A104A2 /* DetailExerciseViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 24771113216618F100A104A2 /* DetailExerciseViewController.swift */; };
@@ -19,12 +22,16 @@
 		248A331320CDA4D2001C9622 /* Exercise.swift in Sources */ = {isa = PBXBuildFile; fileRef = 248A331220CDA4D2001C9622 /* Exercise.swift */; };
 		248A331B20CFEA9E001C9622 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 248A331D20CFEA9E001C9622 /* Localizable.strings */; };
 		249E2AED217E72E800AD05FC /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 249E2AEB217E72E800AD05FC /* InfoPlist.strings */; };
+		24B547FF224CC75D006A4892 /* Reps.swift in Sources */ = {isa = PBXBuildFile; fileRef = 24B547FE224CC75D006A4892 /* Reps.swift */; };
 		52950906E41B0FBCE904CCEB /* Pods_Exercises.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2732E14E1FA9797C3C2B8264 /* Pods_Exercises.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		240A2D88215A9F1100AEC0AE /* AddSetForExerciseController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddSetForExerciseController.swift; sourceTree = "<group>"; };
 		24321285222D06F400AEE267 /* SaveAndLoadData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SaveAndLoadData.swift; sourceTree = "<group>"; };
+		24339C5E22949506006C927F /* RealmPerform.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RealmPerform.swift; sourceTree = "<group>"; };
+		244E8C0E2286BFD60014682A /* RealmConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RealmConfig.swift; sourceTree = "<group>"; };
+		246823E9223C10DF00457622 /* Set.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Set.swift; sourceTree = "<group>"; };
 		247710ED216390ED00A104A2 /* DataTransfer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataTransfer.swift; sourceTree = "<group>"; };
 		247710EF2163ADE800A104A2 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		24771113216618F100A104A2 /* DetailExerciseViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DetailExerciseViewController.swift; sourceTree = "<group>"; };
@@ -39,6 +46,7 @@
 		248A331C20CFEA9E001C9622 /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = ru.lproj/Localizable.strings; sourceTree = "<group>"; };
 		249E2AEC217E72E800AD05FC /* Base */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = Base; path = Exercises/Base.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		249E2AEE217E735C00AD05FC /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = Exercises/ru.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		24B547FE224CC75D006A4892 /* Reps.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Reps.swift; sourceTree = "<group>"; };
 		2732E14E1FA9797C3C2B8264 /* Pods_Exercises.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Exercises.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		5D3F66753D9E423B53EE8775 /* Pods-Exercises.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Exercises.debug.xcconfig"; path = "Target Support Files/Pods-Exercises/Pods-Exercises.debug.xcconfig"; sourceTree = "<group>"; };
 		EE5AC4BC3A6F9599739BBF9F /* Pods-Exercises.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Exercises.release.xcconfig"; path = "Target Support Files/Pods-Exercises/Pods-Exercises.release.xcconfig"; sourceTree = "<group>"; };
@@ -62,7 +70,6 @@
 				5D3F66753D9E423B53EE8775 /* Pods-Exercises.debug.xcconfig */,
 				EE5AC4BC3A6F9599739BBF9F /* Pods-Exercises.release.xcconfig */,
 			);
-			name = Pods;
 			path = Pods;
 			sourceTree = "<group>";
 		};
@@ -73,6 +80,7 @@
 				24771113216618F100A104A2 /* DetailExerciseViewController.swift */,
 				240A2D88215A9F1100AEC0AE /* AddSetForExerciseController.swift */,
 				24321285222D06F400AEE267 /* SaveAndLoadData.swift */,
+				24339C5E22949506006C927F /* RealmPerform.swift */,
 			);
 			path = Controller;
 			sourceTree = "<group>";
@@ -81,6 +89,8 @@
 			isa = PBXGroup;
 			children = (
 				248A331220CDA4D2001C9622 /* Exercise.swift */,
+				246823E9223C10DF00457622 /* Set.swift */,
+				24B547FE224CC75D006A4892 /* Reps.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -97,8 +107,9 @@
 		24321284222847F900AEE267 /* Supported Files */ = {
 			isa = PBXGroup;
 			children = (
-				247710ED216390ED00A104A2 /* DataTransfer.swift */,
 				248A32FE20CD3C8B001C9622 /* AppDelegate.swift */,
+				247710ED216390ED00A104A2 /* DataTransfer.swift */,
+				244E8C0E2286BFD60014682A /* RealmConfig.swift */,
 				247710EF2163ADE800A104A2 /* Assets.xcassets */,
 				249E2AEB217E72E800AD05FC /* InfoPlist.strings */,
 				248A331D20CFEA9E001C9622 /* Localizable.strings */,
@@ -270,13 +281,17 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				246823EA223C10DF00457622 /* Set.swift in Sources */,
 				248A32FF20CD3C8B001C9622 /* AppDelegate.swift in Sources */,
 				248A331120CD3CCF001C9622 /* MainViewController.swift in Sources */,
+				24B547FF224CC75D006A4892 /* Reps.swift in Sources */,
 				240A2D89215A9F1100AEC0AE /* AddSetForExerciseController.swift in Sources */,
 				247710EE216390ED00A104A2 /* DataTransfer.swift in Sources */,
 				24321286222D06F400AEE267 /* SaveAndLoadData.swift in Sources */,
+				244E8C0F2286BFD60014682A /* RealmConfig.swift in Sources */,
 				24771114216618F100A104A2 /* DetailExerciseViewController.swift in Sources */,
 				248A331320CDA4D2001C9622 /* Exercise.swift in Sources */,
+				24339C5F22949506006C927F /* RealmPerform.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -72,7 +72,7 @@ class AddSetForExerciseController: UIViewController {
         
         picker.dataSource = self
         picker.delegate = self
-
+        
         cancelButton.addTarget(self, action: #selector(cancelButtonTapped), for: .touchUpInside)
         saveButton.addTarget(self, action: #selector(saveButtonTapped), for: .touchUpInside)
     }
@@ -116,7 +116,7 @@ class AddSetForExerciseController: UIViewController {
     
     @objc private func saveButtonTapped() {
         dismiss(animated: true) {
-            let reps = self.picker.selectedRow(inComponent: 0) + 1
+            let reps = self.picker.selectedRow(inComponent: 0) * 10 + self.picker.selectedRow(inComponent: 1)// + 1
             self.delegate?.sendReps(number: reps)
         }
     }
@@ -129,17 +129,22 @@ class AddSetForExerciseController: UIViewController {
 
 extension AddSetForExerciseController: UIPickerViewDataSource {
     func numberOfComponents(in pickerView: UIPickerView) -> Int {
-        return 1
+        return 2
     }
     
     func pickerView(_ pickerView: UIPickerView, numberOfRowsInComponent component: Int) -> Int {
-        return 50
+        return 10
     }
 }
 
 extension AddSetForExerciseController: UIPickerViewDelegate {
     func pickerView(_ pickerView: UIPickerView, titleForRow row: Int, forComponent component: Int) -> String? {
-        let result = "\(row + 1)"
-        return result
+//        let result = "\(row + 1)"
+//        return result
+        return String(row)
+    }
+    
+    func pickerView(_ pickerView: UIPickerView, widthForComponent component: Int) -> CGFloat {
+        return CGFloat(30)
     }
 }

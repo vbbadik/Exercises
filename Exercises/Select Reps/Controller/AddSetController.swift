@@ -12,7 +12,7 @@ protocol SelectedRepsDelegate: class {
 
 import UIKit
 
-class AddSetForExerciseController: UIViewController {
+final class AddRepsController: UIViewController {
     
     weak var delegate: SelectedRepsDelegate?
     
@@ -78,9 +78,9 @@ class AddSetForExerciseController: UIViewController {
     }
     
     private func viewConstraints() {
-        // Ограничения
+        // Constraints
         // Frame View
-        let frameHeight = frameView.heightAnchor.constraint(equalToConstant: view.bounds.height / 3)
+        let frameHeight = frameView.heightAnchor.constraint(greaterThanOrEqualToConstant: 250)//(equalToConstant: view.bounds.height / 3)
         let frameWidth = frameView.widthAnchor.constraint(equalToConstant: view.bounds.width)
         let frameLeft = frameView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor)
         let frameRight = frameView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor)
@@ -102,7 +102,8 @@ class AddSetForExerciseController: UIViewController {
         // Picker
         picker.leadingAnchor.constraint(equalTo: frameView.leadingAnchor).isActive = true
         picker.trailingAnchor.constraint(equalTo: frameView.trailingAnchor).isActive = true
-        picker.topAnchor.constraint(equalTo: frameView.topAnchor, constant: 20).isActive = true
+        picker.topAnchor.constraint(equalTo: frameView.topAnchor, constant: 25).isActive = true
+        picker.bottomAnchor.constraint(equalTo: frameView.bottomAnchor).isActive = true
         
         // Color Header for Frame
         colorHeaderForFrame.heightAnchor.constraint(equalTo: saveButton.heightAnchor, multiplier: 1).isActive = true
@@ -127,7 +128,7 @@ class AddSetForExerciseController: UIViewController {
     
 }
 
-extension AddSetForExerciseController: UIPickerViewDataSource {
+extension AddRepsController: UIPickerViewDataSource {
     func numberOfComponents(in pickerView: UIPickerView) -> Int {
         return 2
     }
@@ -137,7 +138,7 @@ extension AddSetForExerciseController: UIPickerViewDataSource {
     }
 }
 
-extension AddSetForExerciseController: UIPickerViewDelegate {
+extension AddRepsController: UIPickerViewDelegate {
     func pickerView(_ pickerView: UIPickerView, titleForRow row: Int, forComponent component: Int) -> String? {
 //        let result = "\(row + 1)"
 //        return result

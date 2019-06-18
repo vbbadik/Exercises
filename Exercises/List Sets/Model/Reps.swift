@@ -9,7 +9,7 @@
 import Foundation
 import RealmSwift
 
-class Reps: Object {
+final class Reps: Object {
     @objc dynamic var reps = 0
     @objc dynamic var time = Date()
     @objc dynamic var exercise: Exercise? = nil

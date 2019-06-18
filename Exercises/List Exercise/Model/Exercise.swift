@@ -9,12 +9,13 @@
 import Foundation
 import RealmSwift
 
-class Exercise: Object {
+final class Exercise: Object {
     
     @objc dynamic public private(set) var id = 0 // public устанавливается для getter, а private(set) для setter
     @objc dynamic var name = ""
-    // Связь между Exercise и Set
-//    let sets = List<Set>()
+    @objc dynamic var sortID = 1
+    // The relationship between Exercise and Sets
+    let sets = List<Set>()
     
     override class func primaryKey() -> String {
         return "id"
@@ -25,6 +26,7 @@ class Exercise: Object {
             let realm = try Realm()
             if let lastID = realm.objects(Exercise.self).sorted(byKeyPath: "id").last?.id {
                 id = lastID + 1
+                sortID = id + 1
                 return id
             }
         } catch {
@@ -36,6 +38,7 @@ class Exercise: Object {
     convenience init(name: String) {
         self.init()
         self.id = createID()
+        self.sortID = createID()
         self.name = name
     }
 }

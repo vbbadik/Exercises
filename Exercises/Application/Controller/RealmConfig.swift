@@ -9,7 +9,11 @@
 import Foundation
 import RealmSwift
 
-class RealmConfig {
+let REALM_Q = "realmQueue"
+
+final class RealmConfig {
+    
+    static let realmQueue = "realmQueue"
     
     static var exerciseRealmConfig: Realm.Configuration {
         

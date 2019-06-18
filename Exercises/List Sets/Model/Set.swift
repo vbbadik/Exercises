@@ -9,11 +9,11 @@
 import Foundation
 import RealmSwift
 
-class Set: Object {
+final class Set: Object {
     @objc dynamic var isVisible = true
     @objc dynamic var date = Date()
-    @objc dynamic var exercise: Exercise? = nil
+//    @objc dynamic var exercise: Exercise? = nil
     let reps = List<Reps>()
-    // Связь между Exercise и Set
-//    let exercise = LinkingObjects(fromType: Exercise.self, property: "sets")
+    // The relationship between Exercise and Sets
+    let exercise = LinkingObjects(fromType: Exercise.self, property: "sets")
 }
